@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_lessons">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.example.voctrainer.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/nav_lessons"
+        android:name="com.example.voctrainer.ui.lessons.LessonsFragment"
+        android:label="Lessons"
+        tools:layout="@layout/fragment_lessons">
+        <action
+            android:id="@+id/action_nav_lessons_to_nav_study_session"
+            app:destination="@id/nav_study_session" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_user_statistics"
+        android:name="com.example.voctrainer.ui.user_statistics.UserStatisticsFragment"
+        android:label="User Statistics"
+        tools:layout="@layout/fragment_user_statistics" />
+
+    <fragment
+        android:id="@+id/nav_lesson_creator"
+        android:name="com.example.voctrainer.ui.lesson_creator.LessonCreatorFragment"
+        android:label="Lesson Creator"
+        tools:layout="@layout/fragment_lesson_creator" />
+
+    <fragment
+        android:id="@+id/nav_study_session"
+        android:name="com.example.voctrainer.ui.study.StudyFragment"
+        android:label="Study Session"
+        tools:layout="@layout/fragment_study">
+        <argument
+            android:name="lessonId"
+            app:argType="long" />
+        <argument
+            android:name="isPracticeWorstWords"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.example.voctrainer.ui.settings.SettingsFragment" 
+        android:label="@string/menu_settings"
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/nav_about"
+        android:name="com.example.voctrainer.ui.about.AboutFragment"
+        android:label="@string/menu_about"
+        tools:layout="@layout/fragment_about" />
+
+</navigation>

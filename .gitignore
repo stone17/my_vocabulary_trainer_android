@@ -1,0 +1,28 @@
+# IDE files
+.idea/
+*.iml
+*~
+*.swp
+
+# Build files
+/build
+/app/build
+
+# Local configuration (for API keys, etc.)
+local.properties
+
+# Android Studio generated files
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Gradle files
+.gradle/
+build/
+
+# Other
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
