@@ -1,7 +1,9 @@
 package com.example.voctrainer.ui.lesson_creator
 
+import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
+import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,12 +42,8 @@ class LessonCreatorFragment : Fragment() {
         super.onCreate(savedInstanceState)
         filePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
-                val currentLessonName = binding.editTextLessonName.text.toString()
-                if (viewModel.selectedLesson.value == null && currentLessonName.isBlank()) {
-                    Toast.makeText(context, "Please select a lesson or enter a name for a new lesson before importing.", Toast.LENGTH_LONG).show()
-                    return@registerForActivityResult
-                }
-                viewModel.importWordsFromFile(it, requireContext().contentResolver)
+                val lessonName = getFileName(uri)?.substringBeforeLast(".") ?: "Imported Lesson"
+                viewModel.importLessonFromFile(lessonName, it, requireContext().contentResolver)
             } ?: run {
                 Toast.makeText(context, "No file selected.", Toast.LENGTH_SHORT).show()
             }
@@ -108,12 +106,7 @@ class LessonCreatorFragment : Fragment() {
         }
 
         binding.buttonImportFile.setOnClickListener {
-            val currentLessonName = binding.editTextLessonName.text.toString()
-            if (viewModel.selectedLesson.value == null && currentLessonName.isBlank()) {
-                Toast.makeText(context, "Please select an existing lesson or enter a name for a new lesson first.", Toast.LENGTH_LONG).show()
-            } else {
-                filePickerLauncher.launch("text/plain")
-            }
+            filePickerLauncher.launch("text/plain")
         }
 
         binding.buttonDeleteLesson.setOnClickListener {
@@ -205,9 +198,6 @@ class LessonCreatorFragment : Fragment() {
                     binding.editTextSwedishWord.hint = "Swedish Word/Phrase (for new lesson)"
                     binding.editTextEnglishWord.hint = "English Word/Phrase (for new lesson)"
                 }
-                val isLessonSelectedOrNameEntered = lesson != null || binding.editTextLessonName.text.isNotBlank()
-                binding.labelCurrentWords.isVisible = isLessonSelectedOrNameEntered
-                binding.recyclerViewLessonWords.isVisible = isLessonSelectedOrNameEntered
             }
         }
     }
@@ -216,26 +206,18 @@ class LessonCreatorFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.selectedLessonWords.collectLatest { words ->
                 wordEntryAdapter.submitList(words)
-                val isLessonSelectedOrNameEntered = viewModel.selectedLesson.value != null || binding.editTextLessonName.text.isNotBlank()
-                if (isLessonSelectedOrNameEntered) {
-                    binding.labelCurrentWords.isVisible = words.isNotEmpty() 
-                } else {
-                    binding.labelCurrentWords.isVisible = false
+                val hasWords = words.isNotEmpty()
+                binding.labelCurrentWords.isVisible = hasWords
+                binding.recyclerViewLessonWords.isVisible = hasWords
+                if (hasWords) {
+                    binding.labelCurrentWords.text = "Current Words in Lesson (${words.size})"
                 }
             }
         }
     }
 
-    private fun observeStatusMessages() { // Renamed from observeImportStatus to be more general
+    private fun observeStatusMessages() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.importStatusMessage.collectLatest { message ->
-                if (message.isNotBlank()) {
-                    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-                    viewModel.clearImportStatusMessage() 
-                }
-            }
-        }
-         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.saveStatusMessage.collectLatest { message ->
                 if (message.isNotBlank()) {
                     Toast.makeText(context, message, Toast.LENGTH_LONG).show()
@@ -256,6 +238,20 @@ class LessonCreatorFragment : Fragment() {
             }
         }
         view?.post { isSpinnerUserAction = true } 
+    }
+
+    private fun getFileName(uri: Uri): String? {
+        var fileName: String? = null
+        val cursor: Cursor? = context?.contentResolver?.query(uri, null, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val displayNameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                if (displayNameIndex != -1) {
+                    fileName = it.getString(displayNameIndex)
+                }
+            }
+        }
+        return fileName
     }
 
     override fun onDestroyView() {

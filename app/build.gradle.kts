@@ -42,6 +42,9 @@ android {
 }
 
 dependencies {
+    implementation("androidx.datastore:datastore-preferences:1.1.7")
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
     val room_version = "2.6.1" // Room version downgraded
 
     implementation("androidx.room:room-runtime:$room_version")

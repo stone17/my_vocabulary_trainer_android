@@ -23,4 +23,7 @@ interface LessonDao {
 
     @Query("SELECT * FROM lessons WHERE lessonId = :id")
     suspend fun getLessonById(id: Long): Lesson?
+
+    @Query("SELECT * FROM lessons WHERE lessonName = :name")
+    suspend fun getLessonByName(name: String): Lesson?
 }

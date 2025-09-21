@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.voctrainer.data.WordEntry
 import com.example.voctrainer.databinding.ItemWorstWordBinding
+import kotlin.math.roundToInt
 
 class WorstWordsAdapter : ListAdapter<WordEntry, WorstWordsAdapter.ViewHolder>(WordEntryDiffCallback()) {
 
@@ -24,9 +25,16 @@ class WorstWordsAdapter : ListAdapter<WordEntry, WorstWordsAdapter.ViewHolder>(W
         fun bind(item: WordEntry) {
             binding.textViewSwedishWordWorst.text = item.swedishWord
             binding.textViewEnglishWordWorst.text = "(${item.englishWord})"
-            binding.textViewIncorrectCountWorst.text = 
+            binding.textViewIncorrectCountWorst.text =
                 "Incorrect: ${item.timesIncorrectInStudy} time${if (item.timesIncorrectInStudy != 1) "s" else ""} " +
                 "| Presented: ${item.timesPresentedInStudy} time${if (item.timesPresentedInStudy != 1) "s" else ""}"
+
+            if (item.timesPresentedInStudy > 0) {
+                val correctnessPercentage = (item.timesPresentedInStudy - item.timesIncorrectInStudy).toFloat() / item.timesPresentedInStudy * 100
+                binding.correctnessProgressBar.progress = correctnessPercentage.roundToInt()
+            } else {
+                binding.correctnessProgressBar.progress = 0
+            }
         }
     }
 }

@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.math.max
 
 class StudyViewModel(
     private val lessonId: Long,
@@ -137,24 +138,8 @@ class StudyViewModel(
         val currentWord = wordsInSession[currentWordIndex]
         val correctAnswer = currentWord.englishWord
 
-        val isMatch = when {
-            userAnswer.isEmpty() && correctAnswer.isEmpty() -> true
-            userAnswer.isEmpty() || correctAnswer.isEmpty() -> false
-            // Length check is implicitly handled by character-wise comparison now for feedback
-            else -> {
-                if (userAnswer.length != correctAnswer.length) false // Still a mismatch if lengths differ
-                else {
-                    val firstCharUser = userAnswer.first()
-                    val firstCharCorrect = correctAnswer.first()
-                    val firstCharMatch = firstCharUser.equals(firstCharCorrect, ignoreCase = true)
-                    if (userAnswer.length == 1) {
-                        firstCharMatch
-                    } else {
-                        firstCharMatch && userAnswer.substring(1) == correctAnswer.substring(1)
-                    }
-                }
-            }
-        }
+        // Case-insensitive comparison for the entire string.
+        val isMatch = userAnswer.equals(correctAnswer, ignoreCase = true)
 
         if (isMatch) {
             _feedbackMessage.value = "Correct!"
@@ -175,33 +160,34 @@ class StudyViewModel(
     }
 
     private fun generateUserAnswerFeedback(userAnswer: String, correctAnswer: String) {
-        val feedbackSpan = SpannableStringBuilder(userAnswer)
         val lenUser = userAnswer.length
         val lenCorrect = correctAnswer.length
+        val maxLength = max(lenUser, lenCorrect)
+        val feedbackSpan = SpannableStringBuilder()
 
-        for (i in 0 until lenUser) {
-            val userChar = userAnswer[i]
-            val isCharCorrect = if (i < lenCorrect) {
+        for (i in 0 until maxLength) {
+            if (i < lenUser && i < lenCorrect) {
+                // Character exists in both, compare them
+                val userChar = userAnswer[i]
                 val correctChar = correctAnswer[i]
-                if (i == 0) {
-                    userChar.equals(correctChar, ignoreCase = true)
-                } else {
-                    userChar == correctChar
-                }
+                val isCharCorrect = userChar.equals(correctChar, ignoreCase = true)
+                
+                feedbackSpan.append(userChar.toString())
+                val color = if (isCharCorrect) Color.GREEN else Color.RED
+                feedbackSpan.setSpan(ForegroundColorSpan(color), i, i + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            } else if (i < lenCorrect) {
+                // User answer is shorter, append placeholder for missing correct characters
+                feedbackSpan.append("_")
+                feedbackSpan.setSpan(ForegroundColorSpan(Color.RED), i, i + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             } else {
-                false // User answer is longer, so extra chars are incorrect
+                // User answer is longer, append extra user characters
+                feedbackSpan.append(userAnswer[i].toString())
+                feedbackSpan.setSpan(ForegroundColorSpan(Color.RED), i, i + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
-
-            val color = if (isCharCorrect) Color.GREEN else Color.RED
-            feedbackSpan.setSpan(
-                ForegroundColorSpan(color),
-                i,
-                i + 1,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
         }
         _userAnswerFeedbackDisplay.value = feedbackSpan
     }
+
 
     fun proceedToNextWord() {
         currentWordIndex++

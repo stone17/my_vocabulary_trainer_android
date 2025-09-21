@@ -1,22 +1,48 @@
 package com.example.voctrainer.ui.lessons
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.voctrainer.data.Lesson
 import com.example.voctrainer.data.LessonDao
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.example.voctrainer.data.UserPreferencesRepository
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
-class LessonsViewModel(private val lessonDao: LessonDao) : ViewModel() {
+class LessonsViewModel(
+    private val lessonDao: LessonDao,
+    private val userPreferencesRepository: UserPreferencesRepository
+) : ViewModel() {
 
-    // Expose a Flow of all lessons from the DAO
     val allLessons: Flow<List<Lesson>> = lessonDao.getAllLessons()
 
-    private val _selectedLesson = MutableStateFlow<Lesson?>(null)
-    val selectedLesson: StateFlow<Lesson?> = _selectedLesson.asStateFlow()
+    private val _selectedLessonIds = MutableStateFlow<Set<Long>>(emptySet())
+    val selectedLessonIds: StateFlow<Set<Long>> = _selectedLessonIds.asStateFlow()
 
-    fun selectLesson(lesson: Lesson?) {
-        _selectedLesson.value = lesson
+    init {
+        viewModelScope.launch {
+            userPreferencesRepository.selectedLessonIds.collect { ids ->
+                _selectedLessonIds.value = ids
+            }
+        }
+    }
+
+    fun toggleLessonSelection(lessonId: Long) {
+        val currentSelection = _selectedLessonIds.value.toMutableSet()
+        if (currentSelection.contains(lessonId)) {
+            currentSelection.remove(lessonId)
+        } else {
+            currentSelection.add(lessonId)
+        }
+        _selectedLessonIds.value = currentSelection
+        viewModelScope.launch {
+            userPreferencesRepository.setSelectedLessonIds(currentSelection)
+        }
+    }
+
+    fun clearSelection() {
+        _selectedLessonIds.value = emptySet()
+        viewModelScope.launch {
+            userPreferencesRepository.setSelectedLessonIds(emptySet())
+        }
     }
 }

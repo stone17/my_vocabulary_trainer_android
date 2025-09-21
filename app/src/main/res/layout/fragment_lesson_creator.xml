@@ -1,147 +1,197 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
     tools:context=".ui.lesson_creator.LessonCreatorFragment">
 
-    <TextView
-        android:id="@+id/label_select_lesson"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Edit Existing Lesson (Optional):"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:padding="16dp">
 
-    <Spinner
-        android:id="@+id/spinner_select_lesson"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:minHeight="48dp"
-        app:layout_constraintTop_toBottomOf="@id/label_select_lesson"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <LinearLayout
+            android:id="@+id/actions_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <Button
-        android:id="@+id/button_create_new_lesson"
-        style="@style/Widget.MaterialComponents.Button.TextButton" 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Or, Create New Lesson"
-        app:layout_constraintTop_toBottomOf="@id/spinner_select_lesson"
-        app:layout_constraintStart_toStartOf="parent" />
+            <Button
+                android:id="@+id/button_create_new_lesson"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New" />
 
-    <EditText
-        android:id="@+id/edit_text_lesson_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Lesson Name"
-        android:inputType="textCapWords"
-        android:minHeight="48dp"
-        app:layout_constraintTop_toBottomOf="@id/button_create_new_lesson"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <Button
+                android:id="@+id/button_import_file"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Import" />
 
-    <EditText
-        android:id="@+id/edit_text_swedish_word"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="Swedish Word/Phrase"
-        android:inputType="text"
-        android:minHeight="48dp"
-        app:layout_constraintTop_toBottomOf="@+id/edit_text_lesson_name"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
-    <EditText
-        android:id="@+id/edit_text_english_word"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="English Word/Phrase"
-        android:inputType="text"
-        android:minHeight="48dp"
-        app:layout_constraintTop_toBottomOf="@+id/edit_text_swedish_word"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <Button
+                android:id="@+id/button_delete_lesson"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delete"
+                android:textColor="?attr/colorError"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
-    <Button
-        android:id="@+id/button_add_word"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Add Word"
-        app:layout_constraintTop_toBottomOf="@+id/edit_text_english_word"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <Button
+                android:id="@+id/button_save_lesson"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save" />
+        </LinearLayout>
 
-    <TextView
-        android:id="@+id/label_current_words"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Current words in lesson:"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-        app:layout_constraintTop_toBottomOf="@+id/button_add_word"
-        app:layout_constraintStart_toStartOf="parent" />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_select_lesson"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardElevation="4dp"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/actions_container">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_lesson_words"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintTop_toBottomOf="@id/label_current_words"
-        app:layout_constraintBottom_toTopOf="@id/button_import_file"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:listitem="@layout/item_word_entry_edit" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-    <Button
-        android:id="@+id/button_import_file"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton" 
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Import from File"
-        app:layout_constraintBottom_toTopOf="@id/guideline_actions_bottom"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+                <TextView
+                    android:id="@+id/label_select_lesson"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select a lesson to edit"
+                    android:textAppearance="?attr/textAppearanceHeadline6" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_actions_bottom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="48dp" />
-    
-    <Button
-        android:id="@+id/button_delete_lesson"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Delete Lesson"
-        android:textColor="?attr/colorError"
-        android:visibility="gone" 
-        tools:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/button_save_lesson"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintHorizontal_weight="1" />
+                <Spinner
+                    android:id="@+id/spinner_select_lesson"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:minHeight="48dp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-    <Button
-        android:id="@+id/button_save_lesson"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Save Lesson"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/button_delete_lesson"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_weight="1" />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/lesson_details_card"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardElevation="4dp"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/card_select_lesson">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lesson Details"
+                    android:textAppearance="?attr/textAppearanceHeadline6" />
+
+                <EditText
+                    android:id="@+id/edit_text_lesson_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="Lesson Name"
+                    android:inputType="textCapWords"
+                    android:minHeight="48dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Add New Word Pair"
+                    android:textAppearance="?attr/textAppearanceSubtitle1" />
+
+                <EditText
+                    android:id="@+id/edit_text_swedish_word"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="Swedish Word/Phrase"
+                    android:inputType="text"
+                    android:minHeight="48dp" />
+
+                <EditText
+                    android:id="@+id/edit_text_english_word"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="English Word/Phrase"
+                    android:inputType="text"
+                    android:minHeight="48dp" />
+
+                <Button
+                    android:id="@+id/button_add_word"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="8dp"
+                    android:text="Add Word" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardElevation="4dp"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lesson_details_card">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/label_current_words"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Current Words in Lesson"
+                    android:textAppearance="?attr/textAppearanceHeadline6" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_lesson_words"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/item_word_entry_edit" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

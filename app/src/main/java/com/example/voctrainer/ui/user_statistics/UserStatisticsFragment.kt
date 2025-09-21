@@ -119,7 +119,7 @@ class UserStatisticsFragment : Fragment() {
                 viewModel.cancelClearAllStatistics()
             }
             .setOnDismissListener { // Ensure ViewModel state is updated if dialog is dismissed e.g. by back button
-                viewModel.cancelClearAllStatistics() 
+                viewModel.cancelClearAllStatistics()
             }
             .show()
     }

@@ -42,9 +42,6 @@ class LessonCreatorViewModel(private val lessonDao: LessonDao, private val wordE
         initialValue = emptyList()
     )
 
-    private val _importStatusMessage = MutableStateFlow("")
-    val importStatusMessage: StateFlow<String> = _importStatusMessage.asStateFlow()
-
     private val _saveStatusMessage = MutableStateFlow("")
     val saveStatusMessage: StateFlow<String> = _saveStatusMessage.asStateFlow()
 
@@ -146,9 +143,17 @@ class LessonCreatorViewModel(private val lessonDao: LessonDao, private val wordE
         }
     }
 
-    fun importWordsFromFile(uri: Uri, contentResolver: ContentResolver) {
+    fun importLessonFromFile(lessonName: String, uri: Uri, contentResolver: ContentResolver) {
         viewModelScope.launch {
-            var importedCount = 0
+            // Step 1: Check for duplicate lesson name
+            val existingLesson = lessonDao.getLessonByName(lessonName)
+            if (existingLesson != null) {
+                _saveStatusMessage.value = "Error: A lesson with the name '$lessonName' already exists."
+                return@launch
+            }
+
+            // Step 2: Read and parse the file
+            val wordPairs = mutableListOf<Pair<String, String>>()
             var failedCount = 0
             try {
                 contentResolver.openInputStream(uri)?.use { inputStream ->
@@ -159,8 +164,7 @@ class LessonCreatorViewModel(private val lessonDao: LessonDao, private val wordE
                                 val swedish = parts[0].trim()
                                 val english = parts[1].trim()
                                 if (swedish.isNotBlank() && english.isNotBlank()) {
-                                    _newlyAddedWordPairs.add(Pair(swedish, english))
-                                    importedCount++
+                                    wordPairs.add(Pair(swedish, english))
                                 } else {
                                     failedCount++
                                 }
@@ -170,22 +174,34 @@ class LessonCreatorViewModel(private val lessonDao: LessonDao, private val wordE
                         }
                     }
                 }
-                if (importedCount > 0 || failedCount > 0) {
-                    _importStatusMessage.value = "Imported $importedCount words. Failed lines: $failedCount."
-                } else {
-                    _importStatusMessage.value = "File was empty or no valid lines found."
-                }
-
             } catch (e: Exception) {
                 e.printStackTrace()
-                _importStatusMessage.value = "Error reading or parsing file: ${e.message}"
+                _saveStatusMessage.value = "Error reading or parsing file: ${e.message}"
+                return@launch
+            }
+
+            if (wordPairs.isEmpty()) {
+                _saveStatusMessage.value = "No valid word pairs found in the file."
+                return@launch
+            }
+
+            // Step 3: Create and save the new lesson
+            val newLesson = Lesson(lessonName = lessonName)
+            val newLessonId = lessonDao.insertLesson(newLesson)
+            val wordsToInsert = wordPairs.map {
+                WordEntry(swedishWord = it.first, englishWord = it.second, lessonOwnerId = newLessonId, isEnabled = true)
+            }
+            wordEntryDao.insertAllWordEntries(wordsToInsert)
+
+            // Step 4: Update state and notify UI
+            _selectedLesson.value = newLesson.copy(lessonId = newLessonId)
+            _saveStatusMessage.value = "Successfully imported and saved lesson '$lessonName' with ${wordPairs.size} words."
+            if (failedCount > 0) {
+                _saveStatusMessage.value += " ($failedCount lines failed to parse)."
             }
         }
     }
 
-    fun clearImportStatusMessage() {
-        _importStatusMessage.value = ""
-    }
     fun clearSaveStatusMessage() {
         _saveStatusMessage.value = ""
     }

@@ -1,118 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_layout_stats"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
     tools:context=".ui.user_statistics.UserStatisticsFragment">
 
-    <ProgressBar
-        android:id="@+id/progress_bar_stats"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        tools:visibility="visible"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
-    <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_height="wrap_content"
+        android:padding="16dp">
 
-        <LinearLayout
-            android:id="@+id/content_layout_stats"
-            android:layout_width="match_parent"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_study_time"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            app:cardElevation="4dp"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/text_view_total_study_time_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Total Study Time:"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
-
-            <TextView
-                android:id="@+id/text_view_total_study_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                tools:text="10 hours, 25 minutes, 13 seconds" />
-
-            <TextView
-                android:id="@+id/text_view_lesson_completions_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Lesson Completions:"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view_lesson_stats"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:minHeight="50dp"
-                tools:listitem="@layout/item_lesson_completion_stat"
-                tools:itemCount="3"/>
-            
-             <TextView
-                android:id="@+id/text_view_no_lesson_stats"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/text_view_total_study_time_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_menu_slideshow"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:text="Total Study Time"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    app:drawableTint="?attr/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/text_view_total_study_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textAppearance="?attr/textAppearanceSubtitle1"
+                    android:textColor="?android:attr/textColorSecondary"
+                    tools:text="10h 25m 13s" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_lesson_completions"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardElevation="4dp"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/card_study_time">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="No lesson completion data yet."
-                android:gravity="center"
-                android:padding="8dp"
-                android:visibility="gone"
-                tools:visibility="visible"/>
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <TextView
-                android:id="@+id/text_view_worst_words_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Top 10 Words to Practice:"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+                <TextView
+                    android:id="@+id/text_view_lesson_completions_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_menu_camera"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:text="Lesson Completions"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    app:drawableTint="?attr/colorPrimary" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view_worst_words"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_lesson_stats"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/item_lesson_completion_stat" />
+
+                <TextView
+                    android:id="@+id/text_view_no_lesson_stats"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="No lesson completion data yet."
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_worst_words"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardElevation="4dp"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/card_lesson_completions">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:minHeight="50dp"
-                tools:listitem="@layout/item_worst_word"
-                tools:itemCount="5"/>
-            
-            <TextView
-                android:id="@+id/text_view_no_worst_words"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="No word statistics yet, or all words are perfectly known!"
-                android:gravity="center"
-                android:padding="8dp"
-                android:visibility="gone"
-                tools:visibility="visible"/>
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <Button
-                android:id="@+id/button_clear_statistics"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="24dp"
-                android:text="Clear All Statistics"
-                android:textColor="?attr/colorError" />
+                <TextView
+                    android:id="@+id/text_view_worst_words_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_menu_gallery"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:text="Top 10 Words to Practice"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    app:drawableTint="?attr/colorPrimary" />
 
-        </LinearLayout>
-    </ScrollView>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_worst_words"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false"
+                    tools:itemCount="5"
+                    tools:listitem="@layout/item_worst_word" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/text_view_no_worst_words"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="No word statistics yet, or all words are perfectly known!"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <Button
+            android:id="@+id/button_clear_statistics"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:text="Clear All Statistics"
+            android:textColor="?attr/colorError"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/card_worst_words" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar_stats"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
